@@ -15,11 +15,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 
-# nenerator function
+# fit_generator function
 def generator(samples, batch_size=32):
 	num_samples = len(samples)
-	print('Number of samples: ', num_samples)
-	print('Batch size: ', batch_size)
 	while 1: # Loop forever so the generator never terminates
 		shuffle(samples)
 		for offset in range(0, num_samples, batch_size):
@@ -57,8 +55,8 @@ def generator(samples, batch_size=32):
 			yield sklearn.utils.shuffle(X_train, y_train)
 
 # compile and train the model using the generator function
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+train_generator = generator(train_samples, batch_size=128)
+validation_generator = generator(validation_samples, batch_size=128)
 
 #ch, row, col = 3, 80, 320  # Trimmed image format
 
@@ -70,8 +68,8 @@ from keras.layers.pooling import MaxPooling2D
 
 model = Sequential()
 # Preprocess incoming data, centered around zero with small standard deviation
-model.add(Cropping2D(cropping=((50,20),(0,0)), input_shape=(160,320,3)))
 model.add(Lambda(lambda x: (x / 127.5) - 1., input_shape=(160, 320, 3)))
+model.add(Cropping2D(cropping=((50,20),(0,0))))
 model.add(Convolution2D(6,5,5,activation=('relu')))
 model.add(MaxPooling2D())
 model.add(Dropout(0.5))
@@ -86,7 +84,7 @@ model.add(Dropout(0.5))
 model.add(Dense(1))
 
 model.compile(optimizer='adam', loss='mse')
-model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=5, verbose=1)
+model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=3, verbose=1)
 
 model.save('model.h5')
 
