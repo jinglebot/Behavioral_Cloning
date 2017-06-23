@@ -71,12 +71,6 @@ def telemetry(sid, data):
         # resize image
         image_array = cv2.resize(image_array, (64,64))
 
-        # change colorspace
-        image_array = cv2.cvtColor(image_array,cv2.COLOR_BGR2HSV)
-        randbrightness = .2 + np.random.uniform()
-        image_array[:,:,2] = image_array[:,:,2] * randbrightness
-        image_array = cv2.cvtColor(image_array,cv2.COLOR_HSV2RGB)
-
         # normalize image
         image_array = (image_array / 127.5) - 1.0
 

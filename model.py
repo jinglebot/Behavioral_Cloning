@@ -36,13 +36,13 @@ def process_image(image):
 	return image
 
 # fit_generator function
-batch_size = 32
-def generator(samples, batch_size):
+BATCH_SIZE = 32
+def generator(samples, BATCH_SIZE):
 	num_samples = len(samples)
 	while 1: # Loop forever so the generator never terminates
 		shuffle(samples)
-		for offset in range(0, num_samples, batch_size):
-			batch_samples = samples[offset:offset+batch_size]
+		for offset in range(0, num_samples, BATCH_SIZE):
+			batch_samples = samples[offset:offset+BATCH_SIZE]
 
 			# get images and steering angles
 			images = []
@@ -53,6 +53,8 @@ def generator(samples, batch_size):
 			for batch_sample in batch_samples:
 				## set filter for steering angle measurement
 				measurement = float(batch_sample[3])
+				# if the steering angle is not within -0.5 to 0.0 to 0.5
+				# include all 3 images in the batch sample
 				if (abs(measurement) > angle_range):
 					for j in range(3):
 						# open/read image files
@@ -65,18 +67,21 @@ def generator(samples, batch_size):
 					measurements.append(measurement)
 					measurements.append(measurement + correction)
 					measurements.append(measurement - correction)
-				elif (np.random.random() > delete_rate):
+				else:
+					# if not, the delete rate will randomly determine which
+					# image/images in the batch sample will be included
 					for j in range(3):
-						# open/read image files
-						source_path = batch_sample[j].split('\\')[-1]
-						filename = source_path.split('/')[-1]
-						local_path = './data/IMG/' + filename
-						image = cv2.imread(local_path)
-						image = process_image(image)
-						images.append(image)
-					measurements.append(measurement)
-					measurements.append(measurement + correction)
-					measurements.append(measurement - correction)
+						if (np.random.random() > delete_rate):
+							# open/read image files
+							source_path = batch_sample[j].split('\\')[-1]
+							filename = source_path.split('/')[-1]
+							local_path = './data/IMG/' + filename
+							image = cv2.imread(local_path)
+							image = process_image(image)
+							images.append(image)
+							if (j == 0): measurements.append(measurement)
+							if (j == 1): measurements.append(measurement + correction)
+							if (j == 2): measurements.append(measurement - correction)
 
 			augmented_images = []
 			augmented_measurements = []
@@ -94,8 +99,8 @@ def generator(samples, batch_size):
 			yield sklearn.utils.shuffle(X_train, y_train)
 
 # compile and train the model using the generator function
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+train_generator = generator(train_samples, BATCH_SIZE)
+validation_generator = generator(validation_samples, BATCH_SIZE)
 
 import keras
 from keras.models import Sequential
@@ -130,7 +135,9 @@ model.compile(optimizer='adam', loss='mse')
 
 callbacks = [EarlyStopping(monitor='val_loss', patience=2, verbose=0), ModelCheckpoint('model.{epoch:02d}-{val_loss:.4f}.h5', monitor='val_loss', save_best_only = True, verbose = 0),]
 
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)/batch_size*batch_size, validation_data=validation_generator, nb_val_samples=len(validation_samples)/batch_size*batch_size, nb_epoch=50, verbose=1, callbacks=callbacks)
+samples_per_epoch = len(train_samples) // BATCH_SIZE * BATCH_SIZE * 6
+
+history_object = model.fit_generator(train_generator, samples_per_epoch = samples_per_epoch, validation_data=validation_generator, nb_val_samples=len(validation_samples)//BATCH_SIZE*BATCH_SIZE, nb_epoch=50, verbose=1, callbacks=callbacks)
 
 ### print the keys contained in the history object
 print(history_object.history.keys())
