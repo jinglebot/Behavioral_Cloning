@@ -55,7 +55,7 @@ My model consists of a convolution neural network with:
 
 The model includes RELU layers to introduce nonlinearity (code line 114-118). Data is preprocessed in the generator with the process_image() function by cropping 70 px at the top and 25 px at the bottom, resizing to 64x64x3, changing randomly the image brightness and converting to RGB, and normalizing in batches (model.py lines 20-36).
 
-I also added processing of the images in the 'drive.py' file (drive.py lines 67-75) to match the processing done in 'model.py'(model.py lines 20-36.
+I also added processing of the images in the 'drive.py' file (drive.py lines 67-75) to match the processing done in 'model.py'(model.py lines 20-36).
 
 #### 2. Attempts to reduce overfitting in the model
 
