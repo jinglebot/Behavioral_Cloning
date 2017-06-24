@@ -5,7 +5,7 @@ import sklearn
 
 # open/read csv log file
 samples = []
-with open('./data_7/driving_log.csv', 'r') as csvfile:
+with open('./data/driving_log.csv', 'r') as csvfile:
 	reader = csv.reader(csvfile)
 	for line in reader:
 		samples.append(line)
@@ -60,7 +60,7 @@ def generator(samples, BATCH_SIZE):
 						# open/read image files
 						source_path = batch_sample[j].split('\\')[-1]
 						filename = source_path.split('/')[-1]
-						local_path = './data_7/IMG/' + filename
+						local_path = './data/IMG/' + filename
 						image = cv2.imread(local_path)
 						image = process_image(image)
 						images.append(image)
@@ -75,7 +75,7 @@ def generator(samples, BATCH_SIZE):
 							# open/read image files
 							source_path = batch_sample[j].split('\\')[-1]
 							filename = source_path.split('/')[-1]
-							local_path = './data_7/IMG/' + filename
+							local_path = './data/IMG/' + filename
 							image = cv2.imread(local_path)
 							image = process_image(image)
 							images.append(image)
@@ -108,29 +108,9 @@ from keras.layers import Flatten, Dense, Lambda, Dropout
 from keras.layers.convolutional import Convolution2D, Cropping2D
 from keras.layers.pooling import MaxPooling2D
 from keras.models import model_from_json
-from keras.models import load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
-# model = load_model('model.h5')
 model = Sequential()
-
-# Preprocess incoming data, centered around zero with small standard deviation
-# model.add(Lambda(lambda x: (x / 127.5) - 1., input_shape=(64, 64, 3)))
-# model.add(Cropping2D(cropping=((70,20),(0,0))))
-
-# model.add(Convolution2D(6,5,5,input_shape=(64,64,3),activation=('relu')))
-# model.add(MaxPooling2D())
-# model.add(Dropout(0.5))
-# model.add(Convolution2D(16,5,5,activation=('relu')))
-# model.add(MaxPooling2D())
-# model.add(Dropout(0.5))
-# model.add(Flatten())
-# model.add(Dense(120))
-# model.add(Dropout(0.5))
-# model.add(Dense(84))
-# model.add(Dropout(0.5))
-# model.add(Dense(1))
-
 model.add(Convolution2D(24,5,5,input_shape=(64,64,3),subsample=(2,2),activation="relu"))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"))
@@ -167,10 +147,3 @@ plt.xlabel('epoch')
 plt.legend(['training set', 'validation set'], loc='upper right')
 plt.show(block=True)
 plt.savefig('test.png')
-
-# model.save_weights("model.h5")
-# print("Saved model to disk")
-# with open("model.json", "w") as json_file:
-#	json_file.write(model.to_json())
-
-# model.save('model.h5')
