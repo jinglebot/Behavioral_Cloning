@@ -26,13 +26,10 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* [model.py](https://github.com/jinglebot/CarND-Behavioral-Cloning-P3/blob/master/model.py) containing the script to create and train the model
-* [drive.py](https://github.com/jinglebot/CarND-Behavioral-Cloning-P3/blob/master/drive.py) for driving the car in autonomous mode
-* [model.h5](https://github.com/jinglebot/CarND-Behavioral-Cloning-P3/blob/master/model.h5) containing a trained convolution neural network
-* [writeup_report.md](https://github.com/jinglebot/CarND-Behavioral-Cloning-P3/blob/master/writeup_report.md) summarizing the results
-
-Addendum:
-* [youtube video link](https://www.youtube.com/watch?v=9pYpiiMOZpc) Unfortunately, my laptop suffers tremendous overexhaustion and shuts down dead while in the midst of running the simulator and driving the car around the track. So, I never saw my car finish the whole track in my laptop. However, two mentors have confirmed that my model was able to drive the car in their machines the whole way around the track several times and at high speed even, and was kind enough to send me this video link.
+* [model.py](./model.py) containing the script to create and train the model
+* [drive.py](./drive.py) for driving the car in autonomous mode
+* [model.h5](./model.h5) containing a trained convolution neural network
+* [writeup_report.md](./writeup_report.md) summarizing the results
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing
